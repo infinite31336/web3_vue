@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 from web3 import Web3
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 infura_api_key = "your_infura_api_key"
 infura_url = f"https://sepolia.infura.io/v3/{infura_api_key}"
@@ -13,8 +15,10 @@ def get_balance(address):
         checksum_address = web3.to_checksum_address(address)
         balance_wei = web3.eth.get_balance(checksum_address)
         balance_eth = web3.from_wei(balance_wei, 'ether')
+        print(f"Infura address {address} balance: {balance_eth} ETH")
         return jsonify({'balance': str(balance_eth), 'unit': 'ETH'})
     except Exception as e:
+        print(f"Failed to get balance: {e}")
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':

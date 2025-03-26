@@ -15,7 +15,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      address: '',
+      address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
       balance: '',
       unit: '',
       error: ''
@@ -29,9 +29,14 @@ export default {
         this.unit = response.data.unit;
         this.error = '';
       } catch (err) {
-        this.error = err.response?.data?.error || 'Failed to fetch balance';
-        this.balance = '';
-        this.unit = '';
+        console.error('Fetch error:', err);
+        if (err.response) {
+          this.error = err.response.data.error || 'Unknown server error';
+        } else if (err.request) {
+          this.error = 'Cannot connect to backend. Check if Flask is running on http://localhost:5000';
+        } else {
+          this.error = 'Request failed: ' + err.message;
+        }
       }
     }
   }
